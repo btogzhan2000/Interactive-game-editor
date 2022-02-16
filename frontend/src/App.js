@@ -1,9 +1,9 @@
-// import Navbar from './components/Navbar.js';
+import Navbar from './components/Navbar.js';
 
 const App = () => {
   return (
     <div>
-      
+      <Navbar />
     </div>
   );
 }
