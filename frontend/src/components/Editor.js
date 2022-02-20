@@ -9,7 +9,7 @@ import "../App.css"
 
 const { TextArea } = Input;
 
-const Editor = () => {
+const Editor = ({page}) => {
     
     const formItemLayout = {
         labelCol: {
@@ -33,11 +33,12 @@ const Editor = () => {
       const onChange = e => {
         console.log('Change:', e.target.value);
     };
-      
 
   return (
             <>    
-                <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} />
+            
+                <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} 
+                placeholder={page.text}/>
                         
                     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish} style={{ margin: 20 }}>
                         <Form.List

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Menu, Layout, Breadcrumb } from 'antd';
 import Editor from './Editor';
 import './Navbar.css'
@@ -8,55 +8,86 @@ import { PlusCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 const { Header, Content, Sider } = Layout;
 
 const Navbar = () => {
+
     const [pages, setPages] = useState([
-        {
-            name: "Page 1",
-            story: {
-                text: "Sample text",
-                choices: ["apple", "orange"]
-            }
-        },
-        {
-            name: "Page 2",
-            story: {
-                text: "Sample text 2",
-                choices: ["iphone", "samsung"]
-            }
-        },
-        {
-            name: "Page 3",
-            story: {
-                text: "Sample text 3",
-                choices: []
-            }
-        },
-        {
-            name: "Page 4",
-            story: {
-                text: "Sample text 4",
-                choices: []
-            }
+          {
+            name: "First page",
+            text: "First page text",
+            choices: [
+              {
+                text: "Choice me",
+                actions: [
+
+                ]
+              },
+              {
+                text: "Choice me too",
+                actions: [
+
+                ]
+              },
+              {
+                text: "and me too",
+                actions: [
+
+                ]
+              }
+              
+            ]      
+          },
+          {
+            name: "Second page",
+            text: "Second page text",
+            choices: [
+              {
+                text: "Choice me",
+                actions: [ 
+                  {
+                    type: "incrementVariable",
+                    variable: "clickCounter"
+                  },
+                  {
+                    type: "goToPage",
+                    page: "First page"
+                  }
+                  
+                ]
+              }  
+            ]      
         }
     ]);
+    const [story, setStory] = useState(
+      {
+        name: "Demo story",
+        author: "Demo author",
+        description: "Demo description",
+        pages: pages
+      }
+    )
     const [count, setCount] = useState(5);
+    const [editor, setEditor] = useState(
+      <Editor 
+        page = {pages[0]}
+      />
+    );
     
     const addNewPage = () => {
-        const newList = pages.concat({name: "Page " + count});
+        const newList = pages.concat({name: "Page " + count, story: {text:"", choices:[]}});
         setCount(count+1);
         setPages(newList);
     }
+    console.log(story)
 
-    const showEditor = (e) => {
-        //e.key()
-        console.log(e);
-    }
-    
-    let editor = (
-        <div>
-            <h1>PAGE NAME</h1>
-            <h1>PAGE NAME</h1>
-        </div>
-    )
+    const showEditor = (page) => {
+
+      setEditor(
+        <Editor 
+          page = {page}
+        />
+      );
+
+  }
+
   return (
       
           <Layout>
@@ -93,7 +124,7 @@ const Navbar = () => {
 
                 <Layout style={{ padding: '0 24px 24px' }}>
                     <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>Page name</Breadcrumb.Item>
+                        <Breadcrumb.Item>EDITOR</Breadcrumb.Item>
                     </Breadcrumb>
 
                     <Content
@@ -104,7 +135,8 @@ const Navbar = () => {
                             minHeight: '81vh',
                         }}
                     >
-                         <Editor />
+                      {editor}
+                         
         
                     </Content>
 
