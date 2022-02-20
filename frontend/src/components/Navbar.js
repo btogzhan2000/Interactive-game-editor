@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Menu, Layout, Breadcrumb } from 'antd';
 import Editor from './Editor';
+import StoryInfoEditor from './StoryInfoEditor';
 import './Navbar.css'
 import "antd/dist/antd.css";
 import "../App.css"
-import { PlusCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FileTextOutlined, FileOutlined } from '@ant-design/icons';
 const { Header, Content, Sider } = Layout;
 
 const Navbar = () => {
@@ -66,8 +67,8 @@ const Navbar = () => {
     )
     const [count, setCount] = useState(5);
     const [editor, setEditor] = useState(
-      <Editor 
-        page = {pages[0]}
+      <StoryInfoEditor 
+        story={story}
       />
     );
     
@@ -86,7 +87,16 @@ const Navbar = () => {
         />
       );
 
-  }
+    }
+    const showStoryEditor = () => {
+
+      setEditor(
+        <StoryInfoEditor 
+          story={story}
+        />
+      );
+
+    }
 
   return (
       
@@ -100,10 +110,6 @@ const Navbar = () => {
             <Layout>
 
                 <Sider width={256} style={{padding: 10}} className="site-layout-background">
-                    <Button type="primary" onClick={addNewPage} >
-                        <PlusCircleOutlined /> Add new page
-                    </Button>
-
                     <Menu
                         theme={'light'}
                         //onClick={handleClick}
@@ -112,6 +118,16 @@ const Navbar = () => {
                         defaultSelectedKeys={['1']}
                         mode="inline"
                     >
+                    <Menu.Item key={"storyinfo"} onClick={() => showStoryEditor()}>
+                        <FileOutlined/> {"EDIT STORY INFO"}
+                    </Menu.Item>
+
+
+                    <Button type="primary" onClick={addNewPage} >
+                        <PlusCircleOutlined /> Add new page
+                    </Button>
+
+                    
                         {
                             pages.map((page) => (
                                 <Menu.Item key={page.name} onClick={() => showEditor(page)}>
