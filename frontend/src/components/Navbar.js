@@ -90,6 +90,7 @@ const Navbar = () => {
       setEditor(
         <Editor 
           page = {page}
+          pages= {pages}
         />
       );
 

@@ -9,7 +9,7 @@ import "../App.css"
 
 const { TextArea } = Input;
 
-const Editor = ({page}) => {
+const Editor = ({page, pages}) => {
     
     const formItemLayout = {
         labelCol: {
