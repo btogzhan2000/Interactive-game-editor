@@ -76,6 +76,12 @@ const Navbar = () => {
         const newList = pages.concat({name: "Page " + count, story: {text:"", choices:[]}});
         setCount(count+1);
         setPages(newList);
+        setStory({
+          name: "Demo story",
+          author: "Demo author",
+          description: "Demo description",
+          pages: pages
+        });
     }
     console.log(story)
 
