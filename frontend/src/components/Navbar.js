@@ -49,7 +49,7 @@ const Navbar = () => {
                   },
                   {
                     type: "goToPage",
-                    page: "First page"
+                    variable: "First page"
                   }
                   
                 ]

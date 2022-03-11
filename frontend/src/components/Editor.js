@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button, Menu, Layout} from 'antd';
-import { Input } from 'antd';
+import { Input, Select } from 'antd';
 import './Navbar.css'
 import { Form } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -8,9 +8,36 @@ import "antd/dist/antd.css";
 import "../App.css"
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 const Editor = ({page, pages}) => {
-    
+    const saved = JSON.parse(localStorage.getItem(page.name));
+    const [choices, setChoices] = useState(saved? saved:page.choices);
+    const [form] = Form.useForm();
+    form.setFieldsValue(
+      {choices: choices}
+    );
+
+    const actionList = [
+      {
+        type: "goToPage",
+        variable: ""
+      }, 
+      {
+        type: "incrementVariable",
+        variable: ""
+      }, 
+    ];
+
+    useEffect(() => {
+      const saved2 = JSON.parse(localStorage.getItem(page.name));
+      setChoices(saved2? saved2:page.choices);
+      // form.setFieldsValue(
+      //   choices
+      // );
+      // console.log("field val", form.getFieldsValue(choices))
+    }, [page]);
+
     const formItemLayout = {
         labelCol: {
           xs: { span: 24 },
@@ -23,6 +50,9 @@ const Editor = ({page, pages}) => {
       };
       const onFinish = values => {
         console.log('Received values of form:', values);
+        setChoices(values.choices);
+        localStorage.setItem(page.name, JSON.stringify(values.choices));
+        //localStorage.setItem(page.name, JSON.stringify(choices));
       };
       const formItemLayoutWithOutLabel = {
         wrapperCol: {
@@ -34,77 +64,184 @@ const Editor = ({page, pages}) => {
         console.log('Change:', e.target.value);
     };
 
+    const handleChangeAction = (value) => {
+      console.log(value);
+    }
+    console.log("choices", choices)
+    console.log("page choices",page.choices)
+
+
   return (
             <>    
             
                 <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} 
                 placeholder={page.text}/>
                         
-                    <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish} style={{ margin: 20 }}>
-                        <Form.List
-                        name="names"
-                            rules={[
-                            {
-                                validator: async (_, names) => {
-                                if (!names || names.length < 2) {
-                                return Promise.reject(new Error('At least 2 passengers'));
-                            }
-                            },
-                            },
-                        ]}
+                    <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} form={form} onFinish={onFinish} style={{ margin: 20 }}>
+                      <Form.List
+                          name="choices"
+                              rules={[
+                              {
+                                  validator: async (_, choices) => {
+                                  if (!choices || choices.length < 2) {
+                                  return Promise.reject(new Error('At least 2 choices'));
+                              }
+                              },
+                              },
+                          ]}
+                          initialValue={choices}
                         >
+
+                        
                         {(fields, { add, remove }, { errors }) => (
                         <>
-                            {fields.map((field, index) => (
-                            <Form.Item
-                                {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                                label={index === 0 ? 'Choices' : ''}
-                                required={false}
-                                key={field.key}
-                            >
-                                <Form.Item
-                                {...field}
-                                validateTrigger={['onChange', 'onBlur']}
-                                rules={[
+                            {
+                              fields.map((field, index) => (
+                              <>
+                              <Form.Item
+                                  {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                                  label={index === 0 ? 'Choices' : ''}
+                                  required={false}
+                                  key={field.key}
+                              > 
+                                
+                                  <Form.Item
+                                    {...field}
+                                    validateTrigger={['onChange', 'onBlur']}
+                                    rules={[
+                                        {
+                                        required: true,
+                                        whitespace: true,
+                                        message: "Please input Choice or delete this field.",
+                                        },
+                                    ]}
+                                    noStyle
+                                    name={[field.name, "text"]}
+                                  >
+                                    <Input placeholder="" style={{ width: '60%' }} />
+                                  </Form.Item>
+
+
+
+                                  {
+                                    fields.length > 1 ? (
+                                    <MinusCircleOutlined
+                                        className="dynamic-delete-button"
+                                        onClick={() => remove(field.name)}
+                                    />
+                                    ) : null
+                                  }
+
+
+                                  
+
+                              </Form.Item>
+
+                              <Form.List
+                                name="actions"
+
+                                //initialValue={choices.actions}
+                              >
+
+
+                                {(fields2, { add, remove }, { errors }) => (
+                                <>
                                     {
-                                    required: true,
-                                    whitespace: true,
-                                    message: "Please input Choice or delete this field.",
-                                    },
-                                ]}
-                                noStyle
-                                >
-                                <Input placeholder="" style={{ width: '60%' }} />
-                                </Form.Item>
-                                {fields.length > 1 ? (
-                                <MinusCircleOutlined
-                                    className="dynamic-delete-button"
-                                    onClick={() => remove(field.name)}
-                                />
-                                ) : null}
-                            </Form.Item>
+                                      fields2.map((field, index) => (
+                                      <>
+                                      <Form.Item
+                                          {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                                          label={index === 0 ? 'Actions' : ''}
+                                          required={false}
+                                          key={field.key}
+                                      > 
+                                        
+                                          <Form.Item
+                                            {...field}
+                                            validateTrigger={['onChange', 'onBlur']}
+                                            // rules={[
+                                            //     {
+                                            //     required: true,
+                                            //     whitespace: true,
+                                            //     message: "Please input action or delete this field.",
+                                            //     },
+                                            // ]}
+                                            noStyle
+                                            name={[field.name, "actions"]}
+                                          >
+                                        
+                                          <Select defaultValue="goToPage" style={{ width: '30%' }} onChange={handleChangeAction}>
+                                            {
+                                              actionList.map((action, index) => (                                
+                                                  <Option value={action.type}>
+                                                    {action.type}
+                                                  </Option>
+                                              ))
+                                            }
+                                          </Select>
+                                          <Input name={[field.name, "variable"]} placeholder="" style={{ width: '30%' }}></Input>
+
+                                      
+                                          </Form.Item>
+
+                                          {
+                                            fields2.length >= 1 ? (
+                                            <MinusCircleOutlined
+                                                className="dynamic-delete-button"
+                                                onClick={() => remove(field.name)}
+                                            />
+                                            ) : null
+                                          }
+
+                                      </Form.Item>
+                                      
+                                <br></br>
+                                      </>
+                                    ))}
+                                    <Form.Item>
+                                      <Button
+                                          type="dashed"
+                                          onClick={() => add()}
+                                          style={{ width: '60%' }}
+                                          icon={<PlusOutlined />}
+                                      >
+                                          Add Action
+                                      </Button>
+                                      
+                                      <Form.ErrorList errors={errors} />
+                                    </Form.Item>
+                                </>
+                                )}
+
+
+                              </Form.List>
+                              
+                                                        
+                              <br></br>
+                              </>
                             ))}
                             <Form.Item>
-                            <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                style={{ width: '60%' }}
-                                icon={<PlusOutlined />}
-                            >
-                                Add Choice
-                            </Button>
-                            
-                            <Form.ErrorList errors={errors} />
+                              <Button
+                                  type="dashed"
+                                  onClick={() => add()}
+                                  style={{ width: '60%' }}
+                                  icon={<PlusOutlined />}
+                              >
+                                  Add Choice
+                              </Button>
+                              
+                              <Form.ErrorList errors={errors} />
                             </Form.Item>
                         </>
                         )}
-                </Form.List>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                    Submit
-                    </Button>
-                </Form.Item>
-                </Form>
+                      </Form.List>
+
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                        Submit
+                        </Button>
+                      </Form.Item>
+                    </Form>
 
         </>
   );
