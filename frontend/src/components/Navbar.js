@@ -17,8 +17,16 @@ const Navbar = () => {
             choices: [
               {
                 text: "Choice me",
-                actions: [
-
+                actions: [ 
+                  {
+                    type: "incrementVariable",
+                    variable: "clickCounter"
+                  },
+                  {
+                    type: "goToPage",
+                    variable: "First page"
+                  }
+                  
                 ]
               },
               {

@@ -13,6 +13,9 @@ const { Option } = Select;
 const Editor = ({page, pages}) => {
     const saved = JSON.parse(localStorage.getItem(page.name));
     const [choices, setChoices] = useState(saved? saved:page.choices);
+
+    const [actions, setActions] = useState([]);
+
     const [form] = Form.useForm();
     form.setFieldsValue(
       {choices: choices}
@@ -95,14 +98,17 @@ const Editor = ({page, pages}) => {
                         
                         {(fields, { add, remove }, { errors }) => (
                         <>
+
                             {
                               fields.map((field, index) => (
+                                
                               <>
+                              {/* {setActions(choices[index].actions)} */}
                               <Form.Item
                                   {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
                                   label={index === 0 ? 'Choices' : ''}
                                   required={false}
-                                  key={field.key}
+                                  key={field.name}
                               > 
                                 
                                   <Form.Item
@@ -117,6 +123,7 @@ const Editor = ({page, pages}) => {
                                     ]}
                                     noStyle
                                     name={[field.name, "text"]}
+                                    key={index}
                                   >
                                     <Input placeholder="" style={{ width: '60%' }} />
                                   </Form.Item>
@@ -133,15 +140,17 @@ const Editor = ({page, pages}) => {
                                   }
 
 
-                                  
+
 
                               </Form.Item>
 
+                              <Form.Item>
                               <Form.List
-                                name="actions"
+                                name={[field.name, "actions"]}
 
-                                //initialValue={choices.actions}
+                                //initialValue={actions}
                               >
+                                
 
 
                                 {(fields2, { add, remove }, { errors }) => (
@@ -153,7 +162,7 @@ const Editor = ({page, pages}) => {
                                           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
                                           label={index === 0 ? 'Actions' : ''}
                                           required={false}
-                                          key={field.key}
+                                          key={field.name}
                                       > 
                                         
                                           <Form.Item
@@ -167,20 +176,22 @@ const Editor = ({page, pages}) => {
                                             //     },
                                             // ]}
                                             noStyle
-                                            name={[field.name, "actions"]}
+                                            //name={[field.name, "action"]}
                                           >
-                                        
-                                          <Select defaultValue="goToPage" style={{ width: '30%' }} onChange={handleChangeAction}>
+                                        <Form.Item name={[field.name, "type"]}>
+                                          <Select style={{ width: '30%' }} onChange={handleChangeAction}>
                                             {
                                               actionList.map((action, index) => (                                
-                                                  <Option value={action.type}>
+                                                  <Option key={index} value={action.type}>
                                                     {action.type}
                                                   </Option>
                                               ))
                                             }
                                           </Select>
-                                          <Input name={[field.name, "variable"]} placeholder="" style={{ width: '30%' }}></Input>
-
+                                          </Form.Item>
+                                          <Form.Item name={[field.name, "variable"]}>
+                                          <Input placeholder="" style={{ width: '30%' }}></Input>
+                                          </Form.Item>
                                       
                                           </Form.Item>
 
@@ -197,6 +208,7 @@ const Editor = ({page, pages}) => {
                                       
                                 <br></br>
                                       </>
+                                      
                                     ))}
                                     <Form.Item>
                                       <Button
@@ -215,7 +227,7 @@ const Editor = ({page, pages}) => {
 
 
                               </Form.List>
-                              
+                              </Form.Item>
                                                         
                               <br></br>
                               </>
