@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'antd';
 import { Input } from 'antd';
 import './Navbar.css'
@@ -10,6 +10,15 @@ const { TextArea } = Input;
 
 const StoryInfoEditor = ({story}) => {
     
+    
+    const saved = JSON.parse(localStorage.getItem("story_data"));
+    
+
+    const [name, setName] = useState(saved ? saved.story.name : story.name);
+    const [author, setAuthor] = useState(saved ? saved.story.author : story.author);
+    const [description, setDescription] = useState(saved ? saved.story.description : story.description);
+
+
     const formItemLayout = {
         labelCol: {
           xs: { span: 24 },
@@ -21,32 +30,48 @@ const StoryInfoEditor = ({story}) => {
         },
       };
       const onFinish = values => {
-        console.log('Received values of form:', values);
+        //console.log('Received values of form:', values);
+        localStorage.setItem("story_data", JSON.stringify({story: {
+          name: name,
+          author: author,
+          description: description
+        }
+        }));
+        localStorage.setItem("story_name", JSON.stringify(name));
+
       };
 
-      const onChange = e => {
-        console.log('Change:', e.target.value);
-        
-    };
+      const onChangeName = (e) => {
+        //console.log('Change:', e.target.value);
+        setName(e.target.value);
+      };
+      const onChangeAuthor = (e) => {
+        //console.log('Change:', e.target.value);
+        setAuthor(e.target.value);
+      };
+      const onChangeDescription = (e) => {
+        //console.log('Change:', e.target.value);
+        setDescription(e.target.value);
+      };
 
   return (
             <>    
                 
                         
-                <Form name="dynamic_form_item" {...formItemLayout} onFinish={onFinish} style={{ margin: 20 }}>
+                <Form name="dynamic_form_item"  {...formItemLayout} onFinish={vals => onFinish(vals)} style={{ margin: 20 }}>
 
                   <Form.Item>
                     {"Name"} 
-                    <Input placeholder={story.name}  />
+                    <Input value={name} onChange={e => onChangeName(e)} />
                   </Form.Item>
                   <Form.Item>
                     {"Author"} 
-                    <Input placeholder={story.author}   />
+                    <Input value={author}   onChange={e => onChangeAuthor(e)} />
                   </Form.Item>
                   <Form.Item>
                     {"Description"} 
-                    <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} 
-                    value={story.description}/>
+                    <TextArea showCount maxLength={100} style={{ height: 120 }} 
+                    value={description} onChange={e => onChangeDescription(e)}/>
                   </Form.Item>
 
                   <Form.Item>

@@ -10,9 +10,10 @@ const { Header, Content, Sider } = Layout;
 
 const Navbar = () => {
 
+    const [storyFull, setStoryFull] = useState();
     const [pages, setPages] = useState([
           {
-            name: "First page",
+            name: "Page 1",
             text: "First page text",
             choices: [
               {
@@ -45,7 +46,7 @@ const Navbar = () => {
             ]      
           },
           {
-            name: "Second page",
+            name: "Page 2",
             text: "Second page text",
             choices: [
               {
@@ -73,7 +74,7 @@ const Navbar = () => {
         pages: pages
       }
     )
-    const [count, setCount] = useState(5);
+    const [count, setCount] = useState(3);
     const [editor, setEditor] = useState(
       <StoryInfoEditor 
         story={story}
@@ -112,6 +113,18 @@ const Navbar = () => {
       );
 
     }
+    const saveStory = (val) => {
+      const storyName = JSON.parse(localStorage.getItem("story_name"));
+      const storyData = JSON.parse(localStorage.getItem("story_data"));
+
+      setStoryFull({
+        name: storyName,
+        story: storyData,
+        pages: pages
+      })
+      console.log(storyName)
+      console.log("full", storyFull);
+    }
 
   return (
       
@@ -120,9 +133,11 @@ const Navbar = () => {
             <Header className="header">
                 <div className="logo" />
                 <h1 style={{color: "white", textAlign:"center"}}>WEB EDITOR INTERFACE</h1>
+                
             </Header>
 
             <Layout>
+              
 
                 <Sider width={256} style={{padding: 10}} className="site-layout-background">
                     <Menu
@@ -154,8 +169,16 @@ const Navbar = () => {
                 </Sider>
 
                 <Layout style={{ padding: '0 24px 24px' }}>
+                <Button 
+                type="primary" 
+                style={{position: 'absolute', right: '150px', top: '20px', width: '100px'}}
+                onClick={val => saveStory(val)}
+                >
+                  Save
+                </Button>
                     <Breadcrumb style={{ margin: '16px 0' }}>
                         <Breadcrumb.Item>EDITOR</Breadcrumb.Item>
+
                     </Breadcrumb>
 
                     <Content
