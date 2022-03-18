@@ -5,7 +5,7 @@ import StoryInfoEditor from './StoryInfoEditor';
 import './Navbar.css'
 import "antd/dist/antd.css";
 import "../App.css"
-import { PlusCircleOutlined, FileTextOutlined, FileOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FileTextOutlined, FileOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const { Header, Content, Sider } = Layout;
@@ -102,25 +102,19 @@ const Navbar = () => {
     //console.log(story)
 
     const createPagesArray = () => {
-
-      setEditedPages([]);
-      for (let i=0; i!= pages.length; i++) {
-        console.log(pages[i])
-        //let page_temp = pages[i];
-        let page_data = JSON.parse(localStorage.getItem( pages[i].name));
-
+      let newEditedPages = [];
+      for (let i = 0; i != pages.length; i++) {
+        let page_data = JSON.parse(localStorage.getItem(pages[i].name));
+  
         if (page_data) {
-          const newPagesList = editedPages.concat({text:  pages[i].text, choices: page_data});
-          setEditedPages(newPagesList);
+          newEditedPages.push({ text: pages[i].text, choices: page_data });
+        } else {
+          newEditedPages.push({ text: pages[i].text, choices: pages[i].choices });
         }
-        else {
-          const newPagesList = editedPages.concat({text:  pages[i].text, choices:  pages[i].choices});
-          setEditedPages(newPagesList);
-        }
-     
       }
+      setEditedPages(newEditedPages);
+    };
 
-    }
     useEffect(() => console.log("edited pages", editedPages), [editedPages])
 
 
@@ -158,7 +152,7 @@ const Navbar = () => {
       const storyName = JSON.parse(localStorage.getItem("story_name"))
       const storyData2 = JSON.parse(localStorage.getItem("story_data"))
       setStoryData(storyData2)
-      setStoryData(storyData => ({...storyData, pages: pages}));
+      setStoryData(storyData => ({...storyData, pages: editedPages}));
       //localStorage.setItem("story_data", JSON.stringify(storyData));
 
       setStoryName(storyName)
@@ -204,10 +198,11 @@ const Navbar = () => {
       //     console.log(persons);
       //   })
 
-      axios.get(`https://storys.digital-tm.kz/story/list`)
+      axios.get(`https://storys.digital-tm.kz/story/get?id=1`)
       .then(res => {
         const persons = res.data;
         console.log(persons);
+        set
       })
     }
     getStory()
