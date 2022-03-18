@@ -6,11 +6,17 @@ import './Navbar.css'
 import "antd/dist/antd.css";
 import "../App.css"
 import { PlusCircleOutlined, FileTextOutlined, FileOutlined } from '@ant-design/icons';
+import axios from 'axios';
+
 const { Header, Content, Sider } = Layout;
+
 
 const Navbar = () => {
 
+    const [storyData, setStoryData] = useState(JSON.parse(localStorage.getItem("story_data")));
     const [storyFull, setStoryFull] = useState();
+    const [storyName, setStoryName] = useState(JSON.parse(localStorage.getItem("story_name")));
+
     const [pages, setPages] = useState([
           {
             name: "Page 1",
@@ -92,7 +98,7 @@ const Navbar = () => {
           pages: pages
         });
     }
-    console.log(story)
+    //console.log(story)
 
     const showEditor = (page) => {
 
@@ -113,18 +119,73 @@ const Navbar = () => {
       );
 
     }
+    useEffect(() => {console.log("full", storyFull); 
+      //setStoryData(JSON.parse(localStorage.getItem("story_data")))
+      //setStoryFull(storyFull);
+      // setStoryFull({
+      //   name: storyName,
+      //   story: storyData
+      // })
+      
+    }, [storyFull])
     const saveStory = (val) => {
-      const storyName = JSON.parse(localStorage.getItem("story_name"));
-      const storyData = JSON.parse(localStorage.getItem("story_data"));
+      
+      const storyName = JSON.parse(localStorage.getItem("story_name"))
+      const storyData2 = JSON.parse(localStorage.getItem("story_data"))
+      setStoryData(storyData2)
+      setStoryData(storyData => ({...storyData, pages: pages}));
+      //localStorage.setItem("story_data", JSON.stringify(storyData));
 
+      setStoryName(storyName)
+      
       setStoryFull({
         name: storyName,
-        story: storyData,
-        pages: pages
+        story: storyData
       })
-      console.log(storyName)
-      console.log("full", storyFull);
+
+      
+      
+      //const storyName = JSON.parse(localStorage.getItem("story_name"));
+      // setStoryName(JSON.parse(localStorage.getItem("story_name")))
+      // setStoryData(JSON.parse(localStorage.getItem("story_data")));
+      // //console.log(storyData)
+      // setStoryData(storyData => ({ ...storyData, pages: pages }))
+      //console.log(storyData)
+      // console.log("name", storyName)
+      // console.log("data", storyData)
+      // setStoryFull({
+      //   name: storyName,
+      //   story: storyData
+      // })
+
+      // console.log("name", storyName)
+      // console.log("data", storyData)
+      // // console.log(storyName)
+      // console.log("full", storyFull);
+      
+      axios.post(`https://storys.digital-tm.kz/story/save`, storyFull )
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
+        })
+
+      
     }
+
+    const getStory = () => {
+      // axios.get(`https://storys.digital-tm.kz/story/get?id=1`)
+      //   .then(res => {
+      //     const persons = res.data;
+      //     console.log(persons);
+      //   })
+
+      axios.get(`https://storys.digital-tm.kz/story/list`)
+      .then(res => {
+        const persons = res.data;
+        console.log(persons);
+      })
+    }
+    getStory()
 
   return (
       

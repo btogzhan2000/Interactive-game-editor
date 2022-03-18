@@ -14,7 +14,7 @@ const Editor = ({page, pages}) => {
     const saved = JSON.parse(localStorage.getItem(page.name));
     const [choices, setChoices] = useState(saved? saved:page.choices);
 
-    const [actions, setActions] = useState([]);
+    const [action, setAction] = useState();
 
     const [form] = Form.useForm();
     form.setFieldsValue(
@@ -68,6 +68,7 @@ const Editor = ({page, pages}) => {
     };
 
     const handleChangeAction = (value) => {
+      setAction(value);
       console.log(value);
     }
     console.log("choices", choices)

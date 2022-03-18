@@ -14,9 +14,9 @@ const StoryInfoEditor = ({story}) => {
     const saved = JSON.parse(localStorage.getItem("story_data"));
     
 
-    const [name, setName] = useState(saved ? saved.story.name : story.name);
-    const [author, setAuthor] = useState(saved ? saved.story.author : story.author);
-    const [description, setDescription] = useState(saved ? saved.story.description : story.description);
+    const [name, setName] = useState(saved ? saved.name : story.name);
+    const [author, setAuthor] = useState(saved ? saved.author : story.author);
+    const [description, setDescription] = useState(saved ? saved.description : story.description);
 
 
     const formItemLayout = {
@@ -31,12 +31,12 @@ const StoryInfoEditor = ({story}) => {
       };
       const onFinish = values => {
         //console.log('Received values of form:', values);
-        localStorage.setItem("story_data", JSON.stringify({story: {
+        localStorage.setItem("story_data", JSON.stringify({
           name: name,
           author: author,
           description: description
         }
-        }));
+        ));
         localStorage.setItem("story_name", JSON.stringify(name));
 
       };
