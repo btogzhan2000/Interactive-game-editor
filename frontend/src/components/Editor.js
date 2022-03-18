@@ -12,12 +12,13 @@ const { Option } = Select;
 
 const Editor = ({page, pages}) => {
     const saved = JSON.parse(localStorage.getItem(page.name));
-    const [choices, setChoices] = useState(saved? saved:page.choices);
+    const [choices, setChoices] = useState(saved? saved.choices:page.choices);
 
-    const [action, setAction] = useState();
+    const [text, setText] = useState(saved? saved.text:page.text);
 
     const [form] = Form.useForm();
     form.setFieldsValue(
+      {text: text},
       {choices: choices}
     );
 
@@ -34,7 +35,8 @@ const Editor = ({page, pages}) => {
 
     useEffect(() => {
       const saved2 = JSON.parse(localStorage.getItem(page.name));
-      setChoices(saved2? saved2:page.choices);
+      setChoices(saved2? saved2.choices:page.choices);
+      setText(saved2? saved2.text:page.text);
       // form.setFieldsValue(
       //   choices
       // );
@@ -54,8 +56,9 @@ const Editor = ({page, pages}) => {
       const onFinish = values => {
         console.log('Received values of form:', values);
         setChoices(values.choices);
-        localStorage.setItem(page.name, JSON.stringify(values.choices));
+        //localStorage.setItem(page.name, JSON.stringify(values.choices));
         //localStorage.setItem(page.name, JSON.stringify(choices));
+        localStorage.setItem(page.name, JSON.stringify(values));
       };
       const formItemLayoutWithOutLabel = {
         wrapperCol: {
@@ -65,10 +68,12 @@ const Editor = ({page, pages}) => {
       };
       const onChange = e => {
         console.log('Change:', e.target.value);
+        setText(e.target.value);
+        console.log(text)
     };
 
     const handleChangeAction = (value) => {
-      setAction(value);
+      //setAction(value);
       console.log(value);
     }
     console.log("choices", choices)
@@ -78,10 +83,13 @@ const Editor = ({page, pages}) => {
   return (
             <>    
             
-                <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} 
-                placeholder={page.text}/>
+                
                         
                     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} form={form} onFinish={onFinish} style={{ margin: 20 }}>
+                    <Form.Item name="text">
+                    <TextArea showCount maxLength={100} style={{ height: 120 }} onChange={onChange} 
+                value={text}/>
+                </Form.Item>
                       <Form.List
                           name="choices"
                               rules={[

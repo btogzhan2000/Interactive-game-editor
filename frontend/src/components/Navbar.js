@@ -17,8 +17,9 @@ const Navbar = () => {
     const [storyFull, setStoryFull] = useState();
     const [storyName, setStoryName] = useState(JSON.parse(localStorage.getItem("story_name")));
     const [editedPages, setEditedPages] = useState([]);
+    const [story, setStory] = useState()
 
-    const [pages, setPages] = useState([
+    const [pages, setPages] = useState(story && story.story && story.story.pages ? story.story.pages:[
           {
             name: "Page 1",
             text: "First page text",
@@ -73,18 +74,31 @@ const Navbar = () => {
             ]      
         }
     ]);
-    const [story, setStory] = useState(
-      {
-        name: "Demo story",
-        author: "Demo author",
-        description: "Demo description",
-        pages: pages
-      }
-    )
+
+    
+    // const [story, setStory] = useState(
+    //   {
+    //     name: "Demo story",
+    //     author: "Demo author",
+    //     description: "Demo description",
+    //     pages: pages
+    //   }
+    // )
+
+   
+
     const [count, setCount] = useState(3);
+
+    //const [pages, setPages] = useState(story && story.story ? story.story.pages : []);
+
     const [editor, setEditor] = useState(
       <StoryInfoEditor 
-        story={story}
+        story={story ? story.story: {
+          name: "",
+          author: "",
+          description: "",
+          pages: pages
+        }}
       />
     );
     
@@ -92,12 +106,9 @@ const Navbar = () => {
         const newList = pages.concat({name: "Page " + count, story: {text:"", choices:[]}});
         setCount(count+1);
         setPages(newList);
-        setStory({
-          name: "Demo story",
-          author: "Demo author",
-          description: "Demo description",
-          pages: pages
-        });
+        //setStory(storyFull);
+        //console.log(storyFull)
+        // crashed when we add new pages
     }
     //console.log(story)
 
@@ -107,7 +118,7 @@ const Navbar = () => {
         let page_data = JSON.parse(localStorage.getItem(pages[i].name));
   
         if (page_data) {
-          newEditedPages.push({ text: pages[i].text, choices: page_data });
+          newEditedPages.push({ text: page_data.text, choices: page_data.choices });
         } else {
           newEditedPages.push({ text: pages[i].text, choices: pages[i].choices });
         }
@@ -132,8 +143,13 @@ const Navbar = () => {
 
       setEditor(
         <StoryInfoEditor 
-          story={story}
-        />
+          story={story ? story.story: {
+          name: "",
+          author: "",
+          description: "",
+          pages: pages
+        }}
+      />
       );
 
     }
@@ -158,6 +174,7 @@ const Navbar = () => {
       setStoryName(storyName)
       
       setStoryFull({
+        id: 2,
         name: storyName,
         story: storyData
       })
@@ -182,11 +199,11 @@ const Navbar = () => {
       // // console.log(storyName)
       // console.log("full", storyFull);
       
-      // axios.post(`https://storys.digital-tm.kz/story/save`, storyFull )
-      //   .then(res => {
-      //     console.log(res);
-      //     console.log(res.data);
-      //   })
+      axios.post(`https://storys.digital-tm.kz/story/save`, storyFull )
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
+        })
 
       
     }
@@ -198,14 +215,19 @@ const Navbar = () => {
       //     console.log(persons);
       //   })
 
-      axios.get(`https://storys.digital-tm.kz/story/get?id=1`)
+      axios.get(`https://storys.digital-tm.kz/story/get?id=2`)
       .then(res => {
-        const persons = res.data;
-        console.log(persons);
-        set
+        setStory(res.data);
       })
+      //setPages(story && story.story ? story.story.pages : []);
     }
-    getStory()
+
+    useEffect(()=> {
+      getStory();
+      console.log(story);
+      //setPages(story ? story.story.pages : []);
+    }, []);
+
 
   return (
       
