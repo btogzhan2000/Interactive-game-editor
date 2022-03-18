@@ -16,6 +16,7 @@ const Navbar = () => {
     const [storyData, setStoryData] = useState(JSON.parse(localStorage.getItem("story_data")));
     const [storyFull, setStoryFull] = useState();
     const [storyName, setStoryName] = useState(JSON.parse(localStorage.getItem("story_name")));
+    const [editedPages, setEditedPages] = useState([]);
 
     const [pages, setPages] = useState([
           {
@@ -100,6 +101,29 @@ const Navbar = () => {
     }
     //console.log(story)
 
+    const createPagesArray = () => {
+
+      setEditedPages([]);
+      for (let i=0; i!= pages.length; i++) {
+        console.log(pages[i])
+        //let page_temp = pages[i];
+        let page_data = JSON.parse(localStorage.getItem( pages[i].name));
+
+        if (page_data) {
+          const newPagesList = editedPages.concat({text:  pages[i].text, choices: page_data});
+          setEditedPages(newPagesList);
+        }
+        else {
+          const newPagesList = editedPages.concat({text:  pages[i].text, choices:  pages[i].choices});
+          setEditedPages(newPagesList);
+        }
+     
+      }
+
+    }
+    useEffect(() => console.log("edited pages", editedPages), [editedPages])
+
+
     const showEditor = (page) => {
 
       setEditor(
@@ -129,7 +153,8 @@ const Navbar = () => {
       
     }, [storyFull])
     const saveStory = (val) => {
-      
+      createPagesArray();
+
       const storyName = JSON.parse(localStorage.getItem("story_name"))
       const storyData2 = JSON.parse(localStorage.getItem("story_data"))
       setStoryData(storyData2)
@@ -163,11 +188,11 @@ const Navbar = () => {
       // // console.log(storyName)
       // console.log("full", storyFull);
       
-      axios.post(`https://storys.digital-tm.kz/story/save`, storyFull )
-        .then(res => {
-          console.log(res);
-          console.log(res.data);
-        })
+      // axios.post(`https://storys.digital-tm.kz/story/save`, storyFull )
+      //   .then(res => {
+      //     console.log(res);
+      //     console.log(res.data);
+      //   })
 
       
     }
