@@ -10,7 +10,7 @@
       <div class="story_wrapper">
         <div class="story_item" v-for="story in game.stories" :key="story.id">
           <div class="story_item_header">
-            <h3 class="story_heading">Story: {{ story.name }}</h3>
+            <h3 class="story_heading">Story: {{ story.story.name }}</h3>
             <v-btn
               @click="handleChangeSelected(story.id)"
               class="add_story"
@@ -23,11 +23,11 @@
 
           <div
             class="page_left"
-            v-if="story.pages.length && story.id === selectedStoryId"
+            v-if="story.story.pages.length && story.id === selectedStoryId"
           >
             <div
               class="page_left_list"
-              v-for="page in story.pages"
+              v-for="page in story.story.pages"
               :key="page.id"
             >
               <h3 class="story_heading">{{ page.name || "No name" }}</h3>
@@ -49,19 +49,21 @@
 
     <div v-if="selectedStoryItem && !selectedPageId" class="right_column">
       <div class="right_heading">
-        <h1>Story: {{ selectedStoryItem.name }}</h1>
+        <h1>Story: {{ selectedStoryItem.story.name }}</h1>
 
         <v-btn class="add_story" dark color="red" @click="removeStory">
-          Remove store {{ selectedStoryItem.name + " " }}
+          Remove story {{ selectedStoryItem.story.name + " " }}
           <v-icon dark> mdi-trash-can-outline </v-icon>
         </v-btn>
+
+        <v-btn @click="handleSendToServer" depressed color="primary">Save</v-btn>
       </div>
 
       <div class="right_main_container">
         <v-row>
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="selectedStoryItem.name"
+              v-model="selectedStoryItem.story.name"
               label="Story name"
               required
             ></v-text-field>
@@ -69,7 +71,7 @@
 
           <v-col cols="12" md="3">
             <v-text-field
-              v-model="selectedStoryItem.author"
+              v-model="selectedStoryItem.story.author"
               label="Story author"
               required
             ></v-text-field>
@@ -79,7 +81,7 @@
             <v-textarea
               outlined
               label="Story description"
-              v-model="selectedStoryItem.description"
+              v-model="selectedStoryItem.story.description"
             ></v-textarea>
           </v-col>
         </v-row>
@@ -97,7 +99,7 @@
         <div class="pages_list">
           <div
             class="page_item"
-            v-for="page in selectedStoryItem.pages"
+            v-for="page in selectedStoryItem.story.pages"
             :key="page.id"
           >
             <div class="page_header_item">
@@ -250,7 +252,7 @@
                     <v-col v-else cols="12" md="12">
                       <v-select
                         :items="
-                          selectedStoryItem.pages.map((item) => item.name)
+                          selectedStoryItem.story.pages.map((item) => item.name)
                         "
                         v-model="action.variable"
                         label="Action variable"
@@ -287,7 +289,7 @@ export default {
     },
 
     selectedPageItem: function () {
-      return this.selectedStoryItem.pages.find(
+      return this.selectedStoryItem.story.pages.find(
         (page) => page.id === this.selectedPageId
       );
     },
@@ -307,6 +309,12 @@ export default {
       };
       this.game = game;
     }
+
+    axios.get(`https://storys.digital-tm.kz/api/story/list`)
+      .then(res => {
+        console.log(res.data)
+    })
+    
   },
 
   watch: {
@@ -323,7 +331,7 @@ export default {
       game: null,
       selectedStoryId: null,
       selectedPageId: null,
-      items: ["click", "goToPage"],
+      items: ["incrementVariable", "decrementVariable", "setVariable", "goToPage"],
     };
   },
 
@@ -331,10 +339,13 @@ export default {
     handleAddNewStory() {
       const newStory = {
         id: Date.now(),
-        name: " " + Math.random(),
-        author: "Demo author",
-        description: "Demo description",
-        pages: [],
+        publisherName: "Demo author",
+        story: {
+          name: " " + Math.random(),
+          author: "Demo author",
+          description: "Demo description",
+          pages: [],
+        }
       };
 
       this.game.stories.push(newStory);
@@ -355,7 +366,7 @@ export default {
         choices: [],
       };
 
-      story.pages.push(newPage);
+      story.story.pages.push(newPage);
     },
 
     removeStory() {
@@ -391,7 +402,7 @@ export default {
           if (story.id === this.selectedStoryItem.id) {
             story = {
               ...story,
-              pages: story.pages.filter((page) => page.id !== pageId),
+              pages: story.story.pages.filter((page) => page.id !== pageId),
             };
           }
           return story;
@@ -450,6 +461,29 @@ export default {
           return item;
         }
       );
+    },
+
+    async handleSendToServer() {
+      const data = JSON.parse(localStorage.getItem("game"));
+      // @TODO Request to save game here
+      const story = data?.stories?.find(
+        (story) => story.id === this.selectedStoryId
+      );
+      
+      // console.log(story)
+      axios.post(`https://storys.digital-tm.kz/api/story/save`, story )
+        .then(res => {
+          // console.log(res);
+          // console.log(res.data);
+          // console.log(data)
+          var foundIndex = data.stories.findIndex(x => x.id == story.id);
+          // console.log(foundIndex)
+
+          data.stories[foundIndex].id = res.data.id;
+          //console.log(data)
+          localStorage.setItem("game", JSON.stringify(data));
+        })
+
     },
   },
 };

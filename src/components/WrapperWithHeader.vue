@@ -5,7 +5,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn @click="handleSendToServer" depressed color="primary">Save</v-btn>
+      <!--<v-btn @click="handleSendToServer" depressed color="primary">Save</v-btn> -->
+
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute bottom temporary>
@@ -49,10 +50,19 @@ export default {
       this.$router.push(to);
     },
 
-    async handleSendToServer() {
-      const data = JSON.parse(localStorage.getItem("game"));
-      // @TODO Request to save game here
-    },
+    // async handleSendToServer() {
+    //   const data = JSON.parse(localStorage.getItem("game"));
+    //   // @TODO Request to save game here
+    //   console.log(data)
+    //   axios.post(`https://storys.digital-tm.kz/api/story/save`, data.stories[0] )
+    //     .then(res => {
+    //       console.log(res);
+    //       console.log(res.data);
+    //       data.stories[0].id = res.data.id;
+    //       localStorage.setItem("game", JSON.stringify(data));
+    //     })
+      
+    // },
   },
 };
 </script>
