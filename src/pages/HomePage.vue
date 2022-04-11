@@ -241,14 +241,6 @@
                   </v-col>
 
                   <div v-if="action.type">
-                    <v-col v-if="action.type === 'click'" cols="12" md="12">
-                      <v-text-field
-                        v-model="action.variable"
-                        label="Action variable"
-                        required
-                      ></v-text-field>
-                    </v-col>
-
                     <v-col v-if="action.type === 'goToPage'" cols="12" md="12">
                       <v-select
                         :items="
@@ -257,6 +249,19 @@
                         v-model="action.page"
                         label="Action variable"
                       ></v-select>
+                    </v-col>
+
+                    <v-col v-else cols="12" md="12">
+                      <v-text-field
+                        v-model="action.variable"
+                        label="Action variable"
+                        required
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="action.value"
+                        label="Action value"
+                        required
+                      ></v-text-field>
                     </v-col>
                   </div>
 
