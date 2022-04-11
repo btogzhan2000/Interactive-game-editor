@@ -249,12 +249,12 @@
                       ></v-text-field>
                     </v-col>
 
-                    <v-col v-else cols="12" md="12">
+                    <v-col v-if="action.type === 'goToPage'" cols="12" md="12">
                       <v-select
                         :items="
                           selectedStoryItem.story.pages.map((item) => item.name)
                         "
-                        v-model="action.variable"
+                        v-model="action.page"
                         label="Action variable"
                       ></v-select>
                     </v-col>
