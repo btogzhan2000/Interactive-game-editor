@@ -241,22 +241,27 @@
                   </v-col>
 
                   <div v-if="action.type">
-                    <v-col v-if="action.type === 'click'" cols="12" md="12">
-                      <v-text-field
-                        v-model="action.variable"
-                        label="Action variable"
-                        required
-                      ></v-text-field>
-                    </v-col>
-
-                    <v-col v-else cols="12" md="12">
+                    <v-col v-if="action.type === 'goToPage'" cols="12" md="12">
                       <v-select
                         :items="
                           selectedStoryItem.story.pages.map((item) => item.name)
                         "
-                        v-model="action.variable"
-                        label="Action variable"
+                        v-model="action.page"
+                        label="Targer page name"
                       ></v-select>
+                    </v-col>
+
+                    <v-col v-else cols="12" md="12">
+                      <v-text-field
+                        v-model="action.variable"
+                        label="Variable name"
+                        required
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="action.value"
+                        label="Value"
+                        required
+                      ></v-text-field>
                     </v-col>
                   </div>
 
@@ -341,7 +346,7 @@ export default {
         id: Date.now(),
         publisherName: "Demo author",
         story: {
-          name: " " + Math.random(),
+          name: "Story " + (this.game.stories.length + 1),
           author: "Demo author",
           description: "Demo description",
           pages: [],
@@ -361,7 +366,7 @@ export default {
     handleNewPage(story) {
       const newPage = {
         id: Date.now(),
-        name: " " + Math.random(),
+        name: "Page " + (story.story.pages.length + 1),
         text: "Page description",
         choices: [],
       };
@@ -464,26 +469,11 @@ export default {
     },
 
     async handleSendToServer() {
-      const data = JSON.parse(localStorage.getItem("game"));
-      // @TODO Request to save game here
-      const story = data?.stories?.find(
-        (story) => story.id === this.selectedStoryId
-      );
-      
-      // console.log(story)
+      const story = this.selectedStoryItem;
       axios.post(`https://storys.digital-tm.kz/api/story/save`, story )
         .then(res => {
-          // console.log(res);
-          // console.log(res.data);
-          // console.log(data)
-          var foundIndex = data.stories.findIndex(x => x.id == story.id);
-          // console.log(foundIndex)
-
-          data.stories[foundIndex].id = res.data.id;
-          //console.log(data)
-          localStorage.setItem("game", JSON.stringify(data));
-        })
-
+          this.selectedStoryItem.id = res.data.id;
+        });
     },
   },
 };
