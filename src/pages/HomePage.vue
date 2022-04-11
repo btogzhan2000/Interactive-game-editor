@@ -301,34 +301,17 @@ export default {
   },
 
   mounted() {
-    // @TODO Get from backend data here
-    const resLocal = JSON.parse(localStorage.getItem("game"));
-
-    if (resLocal) {
-      this.game = resLocal;
-    } else {
-      const game = {
-        id: Date.now(),
-        name: "Game 1",
-        stories: [],
-      };
-      this.game = game;
-    }
+    this.game = {
+      id: Date.now(),
+      name: "Game 1",
+      stories: [],
+    };
 
     axios.get(`https://storys.digital-tm.kz/api/story/list`)
       .then(res => {
-        console.log(res.data)
-    })
+        this.game.stories = res.data;
+    });
     
-  },
-
-  watch: {
-    game: {
-      handler(val) {
-        localStorage.setItem("game", JSON.stringify(val));
-      },
-      deep: true,
-    },
   },
 
   data() {
