@@ -247,7 +247,7 @@
                           selectedStoryItem.story.pages.map((item) => item.name)
                         "
                         v-model="action.page"
-                        label="Action variable"
+                        label="Action page"
                       ></v-select>
                     </v-col>
 
