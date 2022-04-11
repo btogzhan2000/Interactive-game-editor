@@ -56,7 +56,9 @@
           <v-icon dark> mdi-trash-can-outline </v-icon>
         </v-btn>
 
-        <v-btn @click="handleSendToServer" depressed color="primary">Save</v-btn>
+        <v-btn @click="handleSendToServer" depressed color="primary"
+          >Save</v-btn
+        >
       </div>
 
       <div class="right_main_container">
@@ -214,6 +216,48 @@
                 </v-col>
               </v-row>
 
+              <!-- CONDITIONS -->
+              <div class="action_wrapper">
+                <h3>Conditions</h3>
+                <v-col cols="12" md="12">
+                  <v-select
+                    :items="conditionTypes"
+                    v-model="choice.showIf.type"
+                    label="Conditional select"
+                  ></v-select>
+                </v-col>
+
+                <div
+                  v-if="
+                    choice.showIf.type === 'and' || choice.showIf.type === 'or'
+                  "
+                >
+                  <v-btn
+                    class="add_story"
+                    dark
+                    color="indigo"
+                    @click="handleAddConditional(choice.showIf.conditions)"
+                  >
+                    <v-icon dark> mdi-plus </v-icon>
+                  </v-btn>
+                </div>
+                <div v-else>
+                  <v-text-field
+                    v-model="choice.showIf.variableName"
+                    label="Variable name"
+                    required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="choice.showIf.value"
+                    label="Value"
+                    required
+                  ></v-text-field>
+                </div>
+              </div>
+              <!-- CONDITIONS -->
+
+              <br />
+
               <v-btn
                 class="add_story"
                 dark
@@ -285,6 +329,8 @@
 </template>
 
 <script>
+import debounce from "lodash.debounce";
+
 export default {
   computed: {
     selectedStoryItem: function () {
@@ -307,11 +353,9 @@ export default {
       stories: [],
     };
 
-    axios.get(`https://storys.digital-tm.kz/api/story/list`)
-      .then(res => {
-        this.game.stories = res.data;
+    axios.get(`https://storys.digital-tm.kz/api/story/list`).then((res) => {
+      this.game.stories = res.data;
     });
-    
   },
 
   data() {
@@ -319,7 +363,13 @@ export default {
       game: null,
       selectedStoryId: null,
       selectedPageId: null,
-      items: ["incrementVariable", "decrementVariable", "setVariable", "goToPage"],
+      items: [
+        "incrementVariable",
+        "decrementVariable",
+        "setVariable",
+        "goToPage",
+      ],
+      conditionTypes: ["none", "and", "or", "equals", "more", "less"],
     };
   },
 
@@ -333,7 +383,7 @@ export default {
           author: "Demo author",
           description: "Demo description",
           pages: [],
-        }
+        },
       };
 
       this.game.stories.push(newStory);
@@ -375,9 +425,8 @@ export default {
     },
 
     removePageFromPage(pageId) {
-      this.selectedStoryItem.pages = this.selectedStoryItem.pages.filter(
-        (item) => item.id !== pageId
-      );
+      this.selectedStoryItem.story.pages =
+        this.selectedStoryItem.story.pages.filter((item) => item.id !== pageId);
 
       this.selectedStoryId = null;
       this.selectedPageId = null;
@@ -390,7 +439,10 @@ export default {
           if (story.id === this.selectedStoryItem.id) {
             story = {
               ...story,
-              pages: story.story.pages.filter((page) => page.id !== pageId),
+              story: {
+                ...story.story,
+                pages: story.story.pages.filter((page) => page.id !== pageId),
+              },
             };
           }
           return story;
@@ -423,12 +475,31 @@ export default {
         id: Date.now(),
         text: "New choice",
         actions: [],
+        showIf: {
+          id: Date.now(),
+          type: "none",
+          conditions: [],
+          variableName: "",
+          value: "",
+        },
       };
 
       this.selectedPageItem.choices = [
         ...this.selectedPageItem.choices,
         newChoice,
       ];
+    },
+
+    handleAddConditional(conditions) {
+      const newConditions = {
+        id: Date.now(),
+        type: "none",
+        conditions: [],
+        variableName: "",
+        value: "",
+      };
+
+      conditions.push(newConditions);
     },
 
     handleCreateAction(choiceId) {
@@ -451,12 +522,22 @@ export default {
       );
     },
 
-    async handleSendToServer() {
+    handleSendToServer: debounce(async function () {
+      console.log("1232121213");
       const story = this.selectedStoryItem;
-      axios.post(`https://storys.digital-tm.kz/api/story/save`, story )
-        .then(res => {
+      axios
+        .post(`https://storys.digital-tm.kz/api/story/save`, story)
+        .then((res) => {
           this.selectedStoryItem.id = res.data.id;
         });
+    }, 2000),
+  },
+  watch: {
+    game: {
+      handler() {
+        this.handleSendToServer();
+      },
+      deep: true,
     },
   },
 };
