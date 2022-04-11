@@ -8,7 +8,7 @@
       </v-btn>
 
       <div class="story_wrapper">
-        <div class="story_item" v-for="(story, index) in game.stories" :key="index">
+        <div class="story_item" v-for="story in game.stories" :key="story.id">
           <div class="story_item_header">
             <h3 class="story_heading">Story: {{ story.story.name }}</h3>
             <v-btn
@@ -27,8 +27,8 @@
           >
             <div
               class="page_left_list"
-              v-for="(page, index) in story.story.pages"
-              :key="index"
+              v-for="page in story.story.pages"
+              :key="page.id"
             >
               <h3 class="story_heading">{{ page.name || "No name" }}</h3>
 
@@ -99,8 +99,8 @@
         <div class="pages_list">
           <div
             class="page_item"
-            v-for="(page, index) in selectedStoryItem.story.pages"
-            :key="index"
+            v-for="page in selectedStoryItem.story.pages"
+            :key="page.id"
           >
             <div class="page_header_item">
               <h3 class="story_heading">Page: {{ page.name }}</h3>
@@ -186,8 +186,8 @@
         <div class="pages_list">
           <div
             class="page_item"
-            v-for="(choice, index) in selectedPageItem.choices"
-            :key="index"
+            v-for="choice in selectedPageItem.choices"
+            :key="choice.id"
           >
             <div class="page_header_item">
               <h3 class="story_heading">Choice: {{ choice.text }}</h3>
@@ -229,8 +229,8 @@
 
                 <div
                   class="action_wrapper_item"
-                  v-for="(action, index) in choice.actions"
-                  :key="index"
+                  v-for="action in choice.actions"
+                  :key="action.id"
                 >
                   <v-col cols="12" md="12">
                     <v-select
@@ -301,17 +301,34 @@ export default {
   },
 
   mounted() {
-    this.game = {
-      id: Date.now(),
-      name: "Game 1",
-      stories: [],
-    };
+    // @TODO Get from backend data here
+    const resLocal = JSON.parse(localStorage.getItem("game"));
+
+    if (resLocal) {
+      this.game = resLocal;
+    } else {
+      const game = {
+        id: Date.now(),
+        name: "Game 1",
+        stories: [],
+      };
+      this.game = game;
+    }
 
     axios.get(`https://storys.digital-tm.kz/api/story/list`)
       .then(res => {
-        this.game.stories = res.data;
-    });
+        console.log(res.data)
+    })
     
+  },
+
+  watch: {
+    game: {
+      handler(val) {
+        localStorage.setItem("game", JSON.stringify(val));
+      },
+      deep: true,
+    },
   },
 
   data() {
