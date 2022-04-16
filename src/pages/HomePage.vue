@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="wrapper">
     <div v-if="game" class="left_column">
@@ -218,41 +220,54 @@
 
               <!-- CONDITIONS -->
               <div class="action_wrapper">
-                <h3>Conditions</h3>
+
                 <v-col cols="12" md="12">
                   <v-select
-                    :items="conditionTypes"
-                    v-model="choice.showIf.type"
-                    label="Conditional select"
+                  :items="conditionTypes"
+                  v-model="choice.showIf.type"
+                  label="Conditional select"
                   ></v-select>
                 </v-col>
 
-                <div
+
+              <div
                   v-if="
-                    choice.showIf.type === 'and' || choice.showIf.type === 'or'
+                  choice.showIf.type === 'and' || choice.showIf.type === 'or'
                   "
-                >
+              >
                   <v-btn
                     class="add_story"
                     dark
                     color="indigo"
                     @click="handleAddConditional(choice.showIf.conditions)"
                   >
+
                     <v-icon dark> mdi-plus </v-icon>
+
                   </v-btn>
-                </div>
-                <div v-else>
+
+                   <Conditions 
+                    v-bind:conditions="choice.showIf.conditions"
+                    v-bind:conditionTypes="conditionTypes"
+                  />
+              </div>
+
+              <div v-else>
+                  
                   <v-text-field
-                    v-model="choice.showIf.variableName"
-                    label="Variable name"
-                    required
+                  v-model="choice.showIf.variableName"
+                  label="Variable name"
+                  required
                   ></v-text-field>
                   <v-text-field
-                    v-model="choice.showIf.value"
-                    label="Value"
-                    required
+                  v-model="choice.showIf.value"
+                  label="Value"
+                  required
                   ></v-text-field>
-                </div>
+              </div>
+
+               
+                
               </div>
               <!-- CONDITIONS -->
 
@@ -330,8 +345,13 @@
 
 <script>
 import debounce from "lodash.debounce";
+import Conditions from '../components/Conditions.vue'
 
 export default {
+  name: 'HomePage',
+  components: {
+    Conditions
+  },
   computed: {
     selectedStoryItem: function () {
       return this.game?.stories?.find(
@@ -490,17 +510,7 @@ export default {
       ];
     },
 
-    handleAddConditional(conditions) {
-      const newConditions = {
-        id: Date.now(),
-        type: "none",
-        conditions: [],
-        variableName: "",
-        value: "",
-      };
-
-      conditions.push(newConditions);
-    },
+    
 
     handleCreateAction(choiceId) {
       const newAction = {
@@ -522,9 +532,24 @@ export default {
       );
     },
 
+    handleAddConditional(conditions) {
+      console.log("first page", conditions)
+      const newConditions = {
+        id: Date.now(),
+        type: "none",
+        conditions: [],
+        variableName: "",
+        value: ""
+      };
+      conditions.push(newConditions);
+
+    },
+    
+
     handleSendToServer: debounce(async function () {
       console.log("1232121213");
       const story = this.selectedStoryItem;
+      console.log(story)
       axios
         .post(`https://storys.digital-tm.kz/api/story/save`, story)
         .then((res) => {
@@ -542,6 +567,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 .page_left_list {
