@@ -636,7 +636,10 @@ export default {
   margin-top: 10px;
 }
 .add_page {
-  width: 99%;
+  width: 100%;
+}
+.remove_page {
+  margin-top: 10px;
 }
 
 .story_wrapper {
