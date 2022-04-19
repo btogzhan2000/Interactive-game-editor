@@ -28,41 +28,93 @@
             class="page_left"
             v-if="story.story.pages.length && story.id === selectedStoryId"
           >
-            <v-btn
-              class="add_page"
-              dark
-              color="indigo"
-              @click="handleNewPage(selectedStoryItem)"
+
+            <v-dialog
+              v-model="dialog"
+              persistent
+              max-width="600px"
             >
-              Add new page
-              <v-icon dark> mdi-plus </v-icon>
-            </v-btn>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="add_page"
+                  dark
+                  color="indigo"
+                 
+                  v-bind="attrs"
+                  v-on="on"
+                  
+                >
+                  Add new page
+                  <v-icon dark> mdi-plus </v-icon>
+                </v-btn>
+
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Enter the page name...</span>
+                </v-card-title>
+
+                <v-card-text>
+                  <v-container>
+                    
+                    <v-text-field
+                      v-model="page_name"
+                      label="Page name"
+                      required
+                    ></v-text-field>
+           
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="dialog = false"
+                  >
+                    Close
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="dialog = false; handleNewPage(selectedStoryItem, page_name)"
+
+                  >
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+
+            </v-dialog>
+
             <div
               class="page_left_list"
               v-for="page in story.story.pages"
               :key="page.id"
             >
               <h3 class="story_heading">{{ page.name || "No name" }}</h3>
+              <div>
+                <v-btn
+                  class="add_story_buttons"
+                  small
+                  :dark="page.id === selectedPageId ? true : false"
+                  :color="page.id === selectedPageId ? 'indigo' : 'white'"
+                  @click="handleClickPage(page.id)"
+                >
+                  <v-icon x-small dark> mdi-ray-start-arrow </v-icon>
+                </v-btn>
 
-              <v-btn
-                class="add_story_buttons"
-                small
-                :dark="page.id === selectedPageId ? true : false"
-                :color="page.id === selectedPageId ? 'indigo' : 'white'"
-                @click="handleClickPage(page.id)"
-              >
-                <v-icon x-small dark> mdi-ray-start-arrow </v-icon>
-              </v-btn>
-
-              <v-btn
-                class="remove_page"
-                small
-                dark
-                color="red"
-                @click="removePage(page.id)"
-              >
-                <v-icon x-small dark> mdi-trash-can-outline </v-icon>
-              </v-btn>
+                <v-btn
+                  class="remove_page"
+                  small
+                  dark
+                  color="red"
+                  @click="removePage(page.id)"
+                >
+                  <v-icon x-small dark> mdi-trash-can-outline </v-icon>
+                </v-btn>
+              </div>
             </div>
           </div>
         </div>
@@ -110,15 +162,64 @@
           </v-col>
         </v-row>
 
-        <v-btn
-          class="add_story"
-          dark
-          color="indigo"
-          @click="handleNewPage(selectedStoryItem)"
+        <v-dialog
+          v-model="dialog"
+          persistent
+          max-width="600px"
         >
-          Add new page
-          <v-icon dark> mdi-plus </v-icon>
-        </v-btn>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              class="add_page"
+              dark
+              color="indigo"
+              
+              v-bind="attrs"
+              v-on="on"
+              
+            >
+              Add new page
+              <v-icon dark> mdi-plus </v-icon>
+            </v-btn>
+
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">Enter the page name...</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                
+                <v-text-field
+                  v-model="page_name"
+                  label="Page name"
+                  required
+                ></v-text-field>
+        
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="dialog = false"
+              >
+                Close
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="dialog = false; handleNewPage(selectedStoryItem, page_name)"
+
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+        </v-dialog>
 
         <div class="pages_list">
           <div
@@ -408,6 +509,8 @@ export default {
         "goToPage",
       ],
       conditionTypes: ["none", "and", "or", "equals", "more", "less"],
+      dialog: false,
+      page_name: ""
     };
   },
 
@@ -434,15 +537,16 @@ export default {
       this.selectedStoryId = id;
     },
 
-    handleNewPage(story) {
+    handleNewPage(story, page_name) {
       const newPage = {
         id: Date.now(),
-        name: "Page " + (story.story.pages.length + 1),
+        name: page_name ? page_name : "Page " + (story.story.pages.length + 1),
         text: "Add your text here...",
         choices: [],
       };
 
       story.story.pages.push(newPage);
+      this.page_name="";
     },
 
     removeStory() {
