@@ -21,12 +21,22 @@
             >
               <v-icon dark> mdi-ray-start-arrow </v-icon>
             </v-btn>
+            
           </div>
 
           <div
             class="page_left"
             v-if="story.story.pages.length && story.id === selectedStoryId"
           >
+            <v-btn
+              class="add_page"
+              dark
+              color="indigo"
+              @click="handleNewPage(selectedStoryItem)"
+            >
+              Add new page
+              <v-icon dark> mdi-plus </v-icon>
+            </v-btn>
             <div
               class="page_left_list"
               v-for="page in story.story.pages"
@@ -42,6 +52,16 @@
                 @click="handleClickPage(page.id)"
               >
                 <v-icon x-small dark> mdi-ray-start-arrow </v-icon>
+              </v-btn>
+
+              <v-btn
+                class="remove_page"
+                small
+                dark
+                color="red"
+                @click="removePage(page.id)"
+              >
+                <v-icon x-small dark> mdi-trash-can-outline </v-icon>
               </v-btn>
             </div>
           </div>
@@ -596,7 +616,7 @@ export default {
   box-shadow: 1px 1px 10px #e9e9e9;
   height: 100%;
   overflow: hidden;
-  width: 300px;
+  width: 400px;
   max-width: 100%;
 }
 
@@ -608,12 +628,15 @@ export default {
   flex-grow: 1;
   box-sizing: border-box;
   padding: 20px;
-  width: 1500px;
+  width: 1400px;
   max-width: 100%;
 }
 
 .add_story {
   margin-top: 10px;
+}
+.add_page {
+  width: 99%;
 }
 
 .story_wrapper {
