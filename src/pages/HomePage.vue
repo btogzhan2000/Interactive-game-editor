@@ -130,13 +130,13 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="12">
+                <!--<v-col cols="12" md="12">
                   <v-text-field
                     v-model="page.text"
                     label="Page text"
                     required
                   ></v-text-field>
-                </v-col>
+                </v-col>-->
               </v-row>
             </div>
           </div>
@@ -160,22 +160,20 @@
       </div>
 
       <div class="right_main_container">
-        <v-row>
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="selectedPageItem.name"
-              label="Page name"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="selectedPageItem.text"
-              label="Page text"
-              required
-            ></v-text-field>
-          </v-col>
-        </v-row>
+      
+        <v-text-field
+          v-model="selectedPageItem.name"
+          label="Page name"
+          required
+        ></v-text-field>
+
+        <v-textarea
+          v-model="selectedPageItem.text"
+          label="Page text"
+          placeholder="Add your page text here..."
+          required
+          outlined
+        ></v-textarea>
 
         <v-btn
           class="add_story"
@@ -212,7 +210,7 @@
                 <v-col cols="12" md="12">
                   <v-text-field
                     v-model="choice.text"
-                    label="Page name"
+                    label="Choice name"
                     required
                   ></v-text-field>
                 </v-col>
@@ -420,7 +418,7 @@ export default {
       const newPage = {
         id: Date.now(),
         name: "Page " + (story.story.pages.length + 1),
-        text: "Page description",
+        text: "Add your text here...",
         choices: [],
       };
 
