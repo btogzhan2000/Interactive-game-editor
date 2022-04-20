@@ -357,7 +357,7 @@
                     class="add_story"
                     dark
                     color="indigo"
-                    @click="handleAddConditional(choice.showIf.conditions)"
+                    @click="handleAddConditional(choice.showIf)"
                   >
 
                     <v-icon dark> mdi-plus </v-icon>
@@ -656,8 +656,9 @@ export default {
       );
     },
 
-    handleAddConditional(conditions) {
-      console.log("first page", conditions)
+   // Only for AND and OR
+    handleAddConditional(condition) {
+      console.log("first page", condition)
       const newConditions = {
         id: Date.now(),
         type: "none",
@@ -665,8 +666,10 @@ export default {
         variableName: "",
         value: ""
       };
-      conditions.push(newConditions);
-
+      if (condition.conditions)
+        condition.conditions.push(newConditions);
+      else 
+        condition.conditions = [newConditions];
     },
     
 
