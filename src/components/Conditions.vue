@@ -25,7 +25,7 @@
                 class="add_story"
                 dark
                 color="indigo"
-                @click="handleAddConditional(condition.conditions)"
+                @click="handleAddConditional(condition)"
               >
 
                 <v-icon dark> mdi-plus </v-icon>
@@ -40,7 +40,7 @@
 
           </div>
 
-          <div v-else-if="choice.showIf.type === 'none'">
+          <div v-else-if="condition.type === 'none'">
                   
           </div>
 
@@ -100,8 +100,8 @@ export default {
   },
 
   methods: {
-    handleAddConditional(conditions) {
-      console.log(conditions)
+    handleAddConditional(condition) {
+      console.log(condition)
       const newConditions = {
         id: Date.now(),
         type: "none",
@@ -109,12 +109,15 @@ export default {
         variableName: "",
         value: "",
       };
-      // conditions["conditions"] = [];
-       conditions.push(newConditions);
 
+      if (condition.conditions)
+        condition.conditions.push(newConditions);
+      else 
+        condition.conditions = [newConditions];
     },
   },
 };
 </script>
 
-<style lang=""></style>
+<style lang="">
+</style>

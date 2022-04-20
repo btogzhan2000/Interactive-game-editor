@@ -818,6 +818,7 @@ export default {
 
 .action_wrapper {
   margin-top: 20px;
+  padding: 4px;
 }
 
 .action_wrapper_item {
