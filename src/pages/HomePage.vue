@@ -348,7 +348,6 @@
                   ></v-select>
                 </v-col>
 
-
               <div
                   v-if="
                   choice.showIf.type === 'and' || choice.showIf.type === 'or'
@@ -371,8 +370,11 @@
                   />
               </div>
 
-              <div v-else>
+              <div v-else-if="choice.showIf.type === 'none'">
                   
+              </div>
+
+              <div v-else>
                   <v-text-field
                   v-model="choice.showIf.variableName"
                   label="Variable name"

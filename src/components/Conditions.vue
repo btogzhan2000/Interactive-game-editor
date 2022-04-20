@@ -40,6 +40,10 @@
 
           </div>
 
+          <div v-else-if="choice.showIf.type === 'none'">
+                  
+          </div>
+
           <div v-else>
               
               <v-text-field
