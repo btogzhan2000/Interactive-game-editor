@@ -102,6 +102,7 @@ export default {
   methods: {
     handleAddConditional(condition) {
       console.log(condition)
+      console.log('handleAddConditional2')
       const newConditions = {
         id: Date.now(),
         type: "none",
@@ -112,8 +113,10 @@ export default {
 
       if (condition.conditions)
         condition.conditions.push(newConditions);
-      else 
+      else {  
         condition.conditions = [newConditions];
+      }
+      this.$forceUpdate();
     },
   },
 };

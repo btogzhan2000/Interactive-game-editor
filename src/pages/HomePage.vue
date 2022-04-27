@@ -668,8 +668,9 @@ export default {
       };
       if (condition.conditions)
         condition.conditions.push(newConditions);
-      else 
+      else
         condition.conditions = [newConditions];
+      this.$forceUpdate();
     },
     
 
@@ -818,7 +819,9 @@ export default {
 
 .action_wrapper {
   margin-top: 20px;
-  padding: 4px;
+  padding: 6px;
+  box-shadow: 1px 1px 15px #e9e9e9;
+  padding: 20px;
 }
 
 .action_wrapper_item {
